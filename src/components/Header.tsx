@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useSessionCheck } from '../hooks/auth/useSessionCheck'; // Хук для проверки сессии
 import { useLogout } from '../hooks/auth/useLogout'; // Хук для выхода
+import { FiShoppingCart } from 'react-icons/fi'; // Иконка для корзины
 
 const Header: React.FC = () => {
     const { getTotalItems } = useCart();
@@ -19,9 +20,11 @@ const Header: React.FC = () => {
     };
 
     return (
-        <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
+        <Navbar bg="dark" variant="dark" expand="md" fixed="top" className="shadow-lg">
             <Container>
-                <Navbar.Brand as={Link} to="/">Logo soon</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/" className="font-weight-bold text-uppercase">
+                    Logo
+                </Navbar.Brand>
 
                 <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setIsNavbarOpen(!isNavbarOpen)} />
                 <Navbar.Collapse id="basic-navbar-nav" in={isNavbarOpen}>
@@ -47,9 +50,9 @@ const Header: React.FC = () => {
                             </>
                         )}
 
-                        <Nav.Item>
+                        <Nav.Item className="d-flex align-items-center">
                             <Link to="/cart" className="nav-link d-flex align-items-center" onClick={handleLinkClick}>
-                                Корзина
+                                <FiShoppingCart size={24} />
                                 {totalItems > 0 && (
                                     <Badge pill bg="danger" className="ml-2">
                                         {totalItems}

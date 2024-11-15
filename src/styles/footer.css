@@ -1,14 +1,58 @@
-/* src/App.css */
-.page-wrapper {
+.footer {
+    position: relative;
+    width: 100%;
+    background-color: #000; /* Черный фон футера */
+    padding: 20px 0;
+    text-align: center;
+    color: #fff; /* Белый текст */
+    font-size: 14px;
+    margin-top: auto;
+}
+
+.footer-container {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;  /* Страница растягивается на всю высоту */
+    justify-content: space-between;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.content-container {
-    flex: 1;  /* Контент будет занимать всю оставшуюся высоту */
+.company-info {
+    flex: 1;
+    padding-right: 20px;
 }
 
-footer {
-    margin-top: auto; /* Футер всегда будет внизу */
+.social-links {
+    margin-top: 10px;
+}
+
+.social-icon {
+    color: #fff; /* Белые иконки соцсетей */
+    margin: 0 10px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.social-icon:hover {
+    color: #17a2b8; /* Цвет иконки при наведении */
+}
+
+.contact-info {
+    flex: 1;
+    padding-left: 20px;
+    text-align: right;
+}
+
+.footer-bottom {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #bbb; /* Светлый текст для нижней строки */
+}
+
+.footer-heading {
+    color: #fff; /* Белый цвет заголовков */
+}
+
+.footer-text {
+    color: #ddd; /* Светло-серый цвет текста */
 }
