@@ -1,69 +1,94 @@
-import React, { useState } from 'react';
-import { Navbar, Nav, Badge, Container } from 'react-bootstrap';
+import React from 'react';
+import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { useSessionCheck } from '../hooks/auth/useSessionCheck'; // Хук для проверки сессии
-import { useLogout } from '../hooks/auth/useLogout'; // Хук для выхода
-import { FiShoppingCart } from 'react-icons/fi'; // Иконка для корзины
+import { useSessionCheck } from '../hooks/auth/useSessionCheck';
+import { useLogout } from '../hooks/auth/useLogout';
+import { FiShoppingCart } from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
 
 const Header: React.FC = () => {
     const { getTotalItems } = useCart();
-    const { user, loading } = useSessionCheck(); // Получаем информацию о пользователе
-    const { logout } = useLogout(); // Хук для выхода из системы
+    const { user, loading } = useSessionCheck();
+    const { logout } = useLogout();
     const totalItems = getTotalItems();
-    const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Состояние для управления открытием/закрытием меню
 
-    if (loading) return null; // Пока идет проверка сессии, ничего не отображаем
-
-    const handleLinkClick = () => {
-        setIsNavbarOpen(false); // Закрываем меню при клике на пункт
-    };
+    if (loading) return null;
 
     return (
-        <Navbar bg="dark" variant="dark" expand="md" fixed="top" className="shadow-lg">
-            <Container>
-                <Navbar.Brand as={Link} to="/" className="font-weight-bold text-uppercase">
-                    Logo
-                </Navbar.Brand>
-
-                <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setIsNavbarOpen(!isNavbarOpen)} />
-                <Navbar.Collapse id="basic-navbar-nav" in={isNavbarOpen}>
-                    <Nav className="ml-auto flex-grow-1 justify-content-end">
-                        <Nav.Item className="mr-3">
-                            <Link to="/catalog" className="nav-link" onClick={handleLinkClick}>Каталог товаров</Link>
-                        </Nav.Item>
-
-                        {!user ? (
-                            <Nav.Item className="mr-3">
-                                <Link to="/auth" className="nav-link" onClick={handleLinkClick}>Войти / Регистрация</Link>
+        <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999 }}>
+            <Navbar expand="lg" variant="dark" className="navbar-custom">
+                <Container>
+                    <Navbar.Brand as={Link} to="/" className="font-weight-bold text-white">
+                        <img src="/path/to/logo.png" alt="logo" height="40" />
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="navbar-nav" />
+                    <Navbar.Collapse id="navbar-nav">
+                        <Nav className="ms-auto d-flex align-items-center">
+                            {/* Каталог с выпадающим списком */}
+                            <Nav.Item className="mx-3">
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="link" className="nav-link text-white">
+                                        Каталог
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item as={Link} to="/category/1">Категория 1</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/category/2">Категория 2</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/category/3">Категория 3</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             </Nav.Item>
-                        ) : (
-                            <>
-                                <Nav.Item className="mr-3">
-                                    <Link to="/account" className="nav-link" onClick={handleLinkClick}>Личный кабинет</Link>
-                                </Nav.Item>
-                                <Nav.Item className="mr-3">
-                                    <span onClick={logout} className="nav-link" style={{ cursor: 'pointer' }}>
+
+                            {/* Компания с выпадающим списком */}
+                            <Nav.Item className="mx-3">
+                                <Dropdown>
+                                    <Dropdown.Toggle variant="link" className="nav-link text-white">
+                                        Компания
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item as={Link} to="/about">О компании</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/careers">Вакансии</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/news">Новости</Dropdown.Item>
+                                        <Dropdown.Item as={Link} to="/reviews">Отзывы</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Nav.Item>
+
+                            {/* Доставка и оплата */}
+                            <Nav.Item className="mx-3">
+                                <Link to="/delivery" className="nav-link text-white">Доставка и оплата</Link>
+                            </Nav.Item>
+
+                            {/* Вход / регистрация */}
+                            <Nav.Item className="mx-3">
+                                {!user ? (
+                                    <Link to="/auth" className="nav-link text-white">Вход / Регистрация</Link>
+                                ) : (
+                                    <span onClick={logout} className="nav-link text-white" style={{ cursor: 'pointer' }}>
                                         Выйти
                                     </span>
-                                </Nav.Item>
-                            </>
-                        )}
-
-                        <Nav.Item className="d-flex align-items-center">
-                            <Link to="/cart" className="nav-link d-flex align-items-center" onClick={handleLinkClick}>
-                                <FiShoppingCart size={24} />
-                                {totalItems > 0 && (
-                                    <Badge pill bg="danger" className="ml-2">
-                                        {totalItems}
-                                    </Badge>
                                 )}
-                            </Link>
-                        </Nav.Item>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-        </Navbar>
+                            </Nav.Item>
+
+                            {/* Контакты */}
+                            <Nav.Item className="mx-3">
+                                <Link to="/contacts" className="nav-link text-white">Контакты</Link>
+                            </Nav.Item>
+
+                            {/* Корзина */}
+                            <Nav.Item className="mx-3">
+                                <Link to="/cart" className="nav-link d-flex align-items-center text-white">
+                                    <FiShoppingCart size={24} />
+                                    {totalItems > 0 && (
+                                        <span className="badge bg-danger ms-2">{totalItems}</span>
+                                    )}
+                                </Link>
+                            </Nav.Item>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+        </header>
     );
 };
 
