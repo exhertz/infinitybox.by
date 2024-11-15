@@ -17,7 +17,7 @@ const Home: React.FC = () => {
             {/* Основная информация о магазине */}
             <Row className="mt-5 text-center">
                 <Col md={8} className="mx-auto">
-                    <h1 className="home-title">Добро пожаловать в наш интернет-магазин!</h1>
+                    <h1 className="home-title">Добро пожwdwаловать в наш интернет-магазин!</h1>
                     <p className="home-description">
                         Здесь вы найдете товары на любой вкус. Мы предлагаем только лучшие товары,
                         чтобы сделать ваш выбор простым и приятным.
