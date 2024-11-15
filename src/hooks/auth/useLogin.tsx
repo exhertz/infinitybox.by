@@ -4,9 +4,9 @@ import axios from '../../axiosConfig.ts';
 export const useLogin = () => {
     const [error, setError] = useState<string | null>(null);
 
-    const login = async (username: string, password: string) => {
+    const login = async (name: string, password: string) => {
         try {
-            const response = await axios.post('/api/v1/user/login', { username, password });
+            const response = await axios.post('/api/v1/user/login', { name, password });
             if (response.data.success) {
                 localStorage.setItem('token', response.data.token);
                 setError(null);

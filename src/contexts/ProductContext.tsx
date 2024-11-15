@@ -28,16 +28,16 @@ export const ProductProvider = ({ children }: ProductProviderProps) => {
     useEffect(() => {
         const loadProducts = async () => {
             try {
-                const productList = await fetchProducts();
-                setProducts(productList);
+                // const productList = await fetchProducts();
+                // setProducts(productList);
             } catch (err) {
-                setError('Ошибка при загрузке товаров');
+                // setError('Ошибка при загрузке товаров');
             } finally {
                 setLoading(false);
             }
         };
 
-        loadProducts();
+        // loadProducts();
     }, []);
 
     return (

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from '../hooks/auth/useLogin.tsx';
 import { useRegister } from '../hooks/auth/useRegister.tsx';
 import { useValidation } from '../hooks/useValidation';
-import { Alert, Button, Form } from 'react-bootstrap';
-import '../styles/auth.css'
+import { Alert, Button, Form, Card } from 'react-bootstrap';
+import ErrorAlert from '../components/ErrorAlert';
+import { FaGoogle, FaTelegramPlane } from 'react-icons/fa'; // Импорт иконок
+import '../styles/auth.css';
 
 const Auth = () => {
     const [username, setUsername] = useState<string>('');
@@ -12,6 +14,9 @@ const Auth = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [isLogin, setIsLogin] = useState<boolean>(true);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);  // Добавили локальную ошибку для формы
+
     const { login, error: loginError } = useLogin();
     const { register, error: registerError } = useRegister();
     const { message, variant, validateInput } = useValidation(username, password, confirmPassword, email, isLogin);
@@ -22,77 +27,126 @@ const Auth = () => {
 
         if (validateInput()) {
             if (isLogin) {
-                await login(username, password);
-                if (!loginError) navigate('/account'); // Переход на страницу аккаунта после успешного входа
+                const user = await login(username, password);
+                if (user) {
+                    setError(null); // Убираем ошибку при успешном входе
+                    navigate('/account');
+                } else {
+                    setError(loginError || 'Ошибка при входе');
+                }
             } else {
-                await register(username, password, email);
-                if (!registerError) navigate('/account'); // Переход на страницу аккаунта после успешной регистрации
+                const registrationSuccess = await register(username, password, email);
+                if (!registerError && registrationSuccess) {
+                    setIsLogin(true);
+                    setSuccessMessage('Вы успешно зарегистрированы, теперь войдите в аккаунт');
+                    setUsername('');
+                    setPassword('');
+                    setConfirmPassword('');
+                    setEmail('');
+                    setError(null); // Убираем ошибку после успешной регистрации
+                } else {
+                    setError(registerError || 'Ошибка при регистрации');
+                }
             }
         }
     };
 
+    const toggleLoginMode = () => {
+        setIsLogin((prevState) => !prevState);
+        setSuccessMessage(null);
+        setError(null);  // Очищаем ошибку при переключении на другую форму
+    };
+
+    useEffect(() => {
+        // Сбрасываем ошибку при переключении между формами (вход/регистрация)
+        setError(null);
+    }, [isLogin]);
+
     return (
         <div className="auth-container">
-            <h2>{isLogin ? 'Войти' : 'Зарегистрироваться'}</h2>
-            {(loginError || registerError) && <Alert variant="danger">{loginError || registerError}</Alert>}
-            {message && <Alert variant={variant}>{message}</Alert>}
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                    <Form.Label>Логин</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Введите логин"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </Form.Group>
+            <Card className="auth-form-card">
+                <Card.Body>
+                    <h2 className="auth-form-title">{isLogin ? 'Войти' : 'Зарегистрироваться'}</h2>
 
-                {!isLogin && (
-                    <Form.Group className="mb-3">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control
-                            type="email"
-                            placeholder="Введите email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </Form.Group>
-                )}
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Пароль</Form.Label>
-                    <Form.Control
-                        type="password"
-                        placeholder="Введите пароль"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </Form.Group>
+                    <ErrorAlert message={successMessage || error} />
+                    {message && <Alert variant={variant}>{message}</Alert>}
 
-                {!isLogin && (
-                    <Form.Group className="mb-3">
-                        <Form.Label>Подтвердите пароль</Form.Label>
-                        <Form.Control
-                            type="password"
-                            placeholder="Подтвердите пароль"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
-                    </Form.Group>
-                )}
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Логин</Form.Label>
+                            <Form.Control
+                                className="auth-form-input"
+                                type="text"
+                                placeholder="Введите логин"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                        </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    {isLogin ? 'Войти' : 'Зарегистрироваться'}
-                </Button>
+                        {!isLogin && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control
+                                    className="auth-form-input"
+                                    type="email"
+                                    placeholder="Введите email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </Form.Group>
+                        )}
 
-                <Button
-                    variant="link"
-                    onClick={() => setIsLogin((prevState) => !prevState)}
-                    className="mt-3"
-                >
-                    {isLogin ? 'Нет аккаунта? Зарегистрируйтесь' : 'Уже есть аккаунт? Войдите'}
-                </Button>
-            </Form>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Пароль</Form.Label>
+                            <Form.Control
+                                className="auth-form-input"
+                                type="password"
+                                placeholder="Введите пароль"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </Form.Group>
+
+                        {!isLogin && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Подтвердите пароль</Form.Label>
+                                <Form.Control
+                                    className="auth-form-input"
+                                    type="password"
+                                    placeholder="Подтвердите пароль"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                />
+                            </Form.Group>
+                        )}
+
+                        <Button variant="primary" type="submit" className="auth-form-button">
+                            {isLogin ? 'Войти' : 'Зарегистрироваться'}
+                        </Button>
+
+                        <Button
+                            variant="link"
+                            onClick={toggleLoginMode}
+                            className="auth-form-toggle-link"
+                        >
+                            {isLogin ? 'Нет аккаунта? Зарегистрируйтесь' : 'Уже есть аккаунт? Войдите'}
+                        </Button>
+                    </Form>
+
+                    <div className="alternative-login">
+                        <p>Или войдите с помощью:</p>
+                        <div className="social-icons">
+                            <Button variant="outline-danger" className="social-icon-btn">
+                                <FaGoogle size={24} />
+                            </Button>
+                            <Button variant="outline-primary" className="social-icon-btn">
+                                <FaTelegramPlane size={24} />
+                            </Button>
+                        </div>
+                    </div>
+                </Card.Body>
+            </Card>
         </div>
     );
 };

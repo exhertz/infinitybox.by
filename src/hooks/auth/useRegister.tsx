@@ -1,3 +1,4 @@
+// src/hooks/auth/useRegister.tsx
 import { useState } from 'react';
 import axios from '../../axiosConfig.ts';
 
@@ -15,14 +16,14 @@ export const useRegister = () => {
                 setError(null);
                 return response.data.token;  // Возвращаем токен
             } else {
-                // Обработка ошибок, если сервер вернул успешный код, но с ошибкой
+                // Если сервер вернул успешный код, но с ошибкой
                 setError(response.data.message || 'Ошибка регистрации. Попробуйте еще раз.');
                 return null;
             }
         } catch (err) {
             // Обработка ошибок запроса
             if (axios.isAxiosError(err)) {
-                // Сеттим ошибку из ответа сервера
+                // Устанавливаем сообщение об ошибке из ответа сервера, если оно есть
                 setError(err.response?.data || 'Ошибка при регистрации');
             } else {
                 setError('Ошибка при регистрации');

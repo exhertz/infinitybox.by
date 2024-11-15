@@ -35,9 +35,7 @@ a:hover {
     margin-bottom: 20px;
 }
 
-.card:hover {
-    background: #3a3a3a; /* Более светлый оттенок при наведении */
-}
+
 
 /* Кнопки */
 button {

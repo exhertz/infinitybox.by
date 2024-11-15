@@ -3,18 +3,11 @@ import React from 'react';
 import { Alert } from 'react-bootstrap';
 
 interface ErrorAlertProps {
-    message?: string;
-    variant?: string;
+    message: string | null;
 }
 
-const ErrorAlert: React.FC<ErrorAlertProps> = ({ message, variant = 'danger' }) => {
-    if (!message) return null;
-
-    return (
-        <Alert variant={variant} className="error-alert">
-            {message}
-        </Alert>
-    );
+const ErrorAlert: React.FC<ErrorAlertProps> = ({ message }) => {
+    return message ? <Alert variant="danger">{message}</Alert> : null;
 };
 
 export default ErrorAlert;

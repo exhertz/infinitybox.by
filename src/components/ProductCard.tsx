@@ -24,9 +24,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ id }) => {
         const loadProduct = async () => {
             try {
                 const fetchedProduct = await fetchProductById(id);
-                setProduct(fetchedProduct);
+                // setProduct(fetchedProduct);
             } catch (error) {
-                console.error('Ошибка при загрузке товара:', error);
+                // console.error('Ошибка при загрузке товара:', error);
             }
         };
 
